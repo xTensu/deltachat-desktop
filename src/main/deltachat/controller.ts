@@ -231,6 +231,16 @@ export default class DeltaChatController extends EventEmitter {
         this.sendToRenderer('DC_EVENT_CONFIGURE_FAILED')
       }
     })
+
+    dc.on('DC_EVENT_SECUREJOIN_JOINER_PROGRESS', (progress: string) => {
+      if (Number(progress) === 0) {
+        // login failed
+        this.onLoginFailure()
+        this.sendToRenderer('DC_EVENT_SECUREJOIN_FAILED')
+      }
+      this.sendToRenderer('DC_EVENT_SECUREJOIN_JOINER_PROGRESS', progress)
+    })
+
   }
 
   onLoginFailure() {
@@ -272,6 +282,10 @@ export default class DeltaChatController extends EventEmitter {
 
   checkQrCode(qrCode: string) {
     return this._dc.checkQrCode(qrCode)
+  }
+
+  joinSecurejoin(qrCode: string) {
+    this._dc.joinSecurejoin(qrCode)
   }
 
   // ToDo: Deprecated, use contacts.getContact
