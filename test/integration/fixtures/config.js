@@ -1,5 +1,4 @@
 const conf = require('rc')('DCC', {})
-// const request = require('request')
 const fetch = require('node-fetch')
 
 if (conf.NEW_TMP_EMAIL === undefined) {

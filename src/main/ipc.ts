@@ -19,6 +19,33 @@ import { ExtendedAppMainProcess } from './types'
 import * as mainWindow from './windows/main'
 import { openHelpWindow } from './windows/help'
 
+/** tmp for easy testing */
+
+const conf = require('rc')('DCC', {})
+const fetch = require('node-fetch')
+
+if (conf.NEW_TMP_EMAIL === undefined) {
+  console.error('Missing DCC_NEW_TMP_EMAIL environment variable!')
+  process.exit(1)
+}
+
+async function postData (url = '') {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'cache-control': 'no-cache'
+    },
+    referrerPolicy: 'no-referrer' // no-referrer, *client
+  })
+  return response.json() // parses JSON response into native JavaScript objects
+}
+
+/** TODO: remove again */
+
 const log = getLogger('main/ipc')
 const DeltaChatController: typeof import('./deltachat/controller').default = (() => {
   try {
@@ -137,6 +164,20 @@ export function init(cwd: string, state: AppState, logHandler: LogHandler) {
     dcController.loginController.login(
       login.path,
       { addr: login.addr },
+      sendStateToRenderer,
+      txCoreStrings()
+    )
+  })
+
+
+  /**
+   * TODO: remove again
+   */
+  ipcMain.on('_createTmpUser', async () => {
+    const {email, password} = await postData(conf.NEW_TMP_EMAIL)
+    dcController.loginController.login(
+      getNewAccountPath(email),
+      {addr: email, mail_pw: password},
       sendStateToRenderer,
       txCoreStrings()
     )

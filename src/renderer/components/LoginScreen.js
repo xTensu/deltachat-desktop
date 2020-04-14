@@ -154,6 +154,10 @@ export default function LoginScreen(props) {
     sendToBackend('loadAccount', login)
   }
 
+  function createTmpAccount() {
+    sendToBackend('_createTmpUser');
+  }
+
   function forgetLogin(login) {
     const message = tx('forget_login_confirmation_desktop')
     openDialog('ConfirmationDialog', {
@@ -211,6 +215,9 @@ export default function LoginScreen(props) {
             <Button type='cancel' text={tx('cancel')} />
           </Login>
           <ImportButton />
+        </Card>
+        <Card>
+          <Button onClick={createTmpAccount}>Create tmp account</Button>
         </Card>
       </div>
     </div>
