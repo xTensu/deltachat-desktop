@@ -104,8 +104,10 @@ export function DeltaDialogImportQrInner({
               /* ignore-console-log */
               console.log('DC_EVENT_SECUREJOIN_FAILED', payload)
             })
-            ipcRenderer.on('DD_EVENT_CHAT_MODIFIED', selectChatAndClose)
-            callDcMethodAsync('joinSecurejoin', scannedQrCode)
+            callDcMethodAsync('joinSecurejoin', scannedQrCode).then(chatId => {
+              selectChat(chatId)
+              onClose()
+            })
           }
         }
       })
@@ -120,8 +122,10 @@ export function DeltaDialogImportQrInner({
               /* ignore-console-log */
               console.log('DC_EVENT_SECUREJOIN_FAILED', payload)
             })
-            ipcRenderer.on('DD_EVENT_CHAT_MODIFIED', selectGroupChat)
-            callDcMethodAsync('joinSecurejoin', scannedQrCode)
+            callDcMethodAsync('joinSecurejoin', scannedQrCode).then(chatId => {
+              selectChat(chatId)
+              onClose()
+            })
           }
           return
         }
