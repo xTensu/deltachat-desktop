@@ -44,7 +44,7 @@ export function DeltaDialogImportQrInner({
 }) {
   const tx = window.translate
   const [ qrCode, setQrCode ] = useState('')
-  const [ useCamera, setUseCamera ] = useState(false)
+  const [ useCamera, setUseCamera ] = useState(true)
   const screenContext = useContext(ScreenContext)
   const [secureJoinOngoing, setSecureJoinOngoing] = useState(false)
 
@@ -166,6 +166,17 @@ export function DeltaDialogImportQrInner({
             </div>}
           {!secureJoinOngoing &&
           <div className='import-qr-code-dialog'>
+            {useCamera &&
+            <div>
+              <div>
+                <QrReader
+                  delay={300}
+                  onError={handleError}
+                  onScan={handleScan}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>}
             <div className='qr-data'>
               <div className='content' aria-label={tx('a11y_qr_data')}>
                 {qrCode}
@@ -184,29 +195,6 @@ export function DeltaDialogImportQrInner({
             <button onClick={openImageDialog} className={'bp3-button'}>
             {tx('load_qr_code_as_image')}
             </button>
-            {!useCamera && 
-            <button
-              aria-label={tx('scan_with_camera')}
-              onClick={toggleCamera}
-              className={'bp3-button'}
-            >{tx('scan_with_camera')}</button>}
-            {useCamera && 
-            <div>
-              <button
-              aria-label={tx('cancel_camera')}
-              onClick={toggleCamera}
-              className={'bp3-button'}
-              >{tx('cancel_camera')}</button> 
-              <div>
-                <QrReader
-                  delay={300}
-                  onError={handleError}
-                  onScan={handleScan}
-                  style={{ width: '100%' }}
-                />
-                
-              </div>
-            </div>}
             <div className='qr-image-loader'>
               <QrReader
                 delay={300}
