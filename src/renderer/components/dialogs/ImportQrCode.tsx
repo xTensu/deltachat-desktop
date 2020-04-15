@@ -12,7 +12,6 @@ const { ipcRenderer } = window.electron_functions
 import { selectChat } from '../../stores/chat'
 import QrReader from 'react-qr-reader'
 import { Intent, ProgressBar } from '@blueprintjs/core'
-import { Chat } from 'deltachat-node'
 
 interface QrStates {
   [key: number]: string;
@@ -67,6 +66,7 @@ export function DeltaDialogImportQrInner({
       return;
     }
     const selectGroupChat = (evt: Event, payload: {chatId: number, chat: ChatListItemType}) => {
+      /* ignore-console-log */
       console.log('selectGroupChat payload: ', payload)
       // CHAT MODIFIED EVENT is also sent when chat with inviting user is created
       if (payload.chat && payload.chat.isGroup) {
@@ -76,6 +76,7 @@ export function DeltaDialogImportQrInner({
       }
     }
     const selectChatAndClose = (evt: Event, payload: {chatId: number, chat: ChatListItemType}) => {
+      /* ignore-console-log */
       console.log('selectChatAndClose payload: ', payload)
       // CHAT MODIFIED EVENT is also sent when chat with inviting user is created
       if (payload.chatId) {
@@ -100,6 +101,7 @@ export function DeltaDialogImportQrInner({
           if (confirmed) {
             setSecureJoinOngoing(true)
             ipcRenderer.once('DC_EVENT_SECUREJOIN_FAILED', (evt: Event, payload: any) => {
+              /* ignore-console-log */
               console.log('DC_EVENT_SECUREJOIN_FAILED', payload)
             })
             ipcRenderer.on('DD_EVENT_CHAT_MODIFIED', selectChatAndClose)
@@ -115,6 +117,7 @@ export function DeltaDialogImportQrInner({
           if (confirmed) {
             setSecureJoinOngoing(true)
             ipcRenderer.once('DC_EVENT_SECUREJOIN_FAILED', (evt: Event, payload: any) => {
+              /* ignore-console-log */
               console.log('DC_EVENT_SECUREJOIN_FAILED', payload)
             })
             ipcRenderer.on('DD_EVENT_CHAT_MODIFIED', selectGroupChat)
@@ -132,10 +135,6 @@ export function DeltaDialogImportQrInner({
     if (data) {
       handleResponse(data)
     }
-  }
-
-  const onImageLoad = (img: ImageBitmap) => {
-    console.log(img)
   }
 
   const handleError = (err: string) => {
@@ -210,7 +209,6 @@ export function DeltaDialogImportQrInner({
                 ref={qrImageReader}
                 onError={handleError}
                 onScan={handleScan}
-                onImageLoad={onImageLoad}
                 style={{ width: '100%' }}
                 legacyMode
               />
@@ -218,8 +216,6 @@ export function DeltaDialogImportQrInner({
           </div>}
         </DeltaDialogContent>
       </DeltaDialogBody>
-      <DeltaDialogFooter>
-      </DeltaDialogFooter>
     </>
   )
 }
