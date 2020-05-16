@@ -97,8 +97,10 @@ export default class DeltaChatController extends EventEmitter {
    * @param {*} evt
    * @param {string} methodName
    * @param {*} args
+   *
+   * @throws Error of called function or an error when the function doesn't exist.
    */
-  async callMethod(_evt: any, methodName: string, args: any[] = []) {
+  async _callMethod(methodName: string, args: any[] = []) {
     const method =
       methodName.indexOf('.') !== -1
         ? this.__resolveNestedMethod(this, methodName)
@@ -111,16 +113,7 @@ export default class DeltaChatController extends EventEmitter {
             }
             return method.bind(this)
           })(methodName)
-
-    let returnValue
-    try {
-      returnValue = await method(...args)
-    } catch (err) {
-      log.error(
-        `Error calling ${methodName}(${args.join(', ')}):\n ${err.stack}`
-      )
-    }
-    return returnValue
+    return await method(...args)
   }
 
   sendToRenderer(eventType: string, payload?: any) {
