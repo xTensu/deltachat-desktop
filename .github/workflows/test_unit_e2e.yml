@@ -22,7 +22,7 @@ jobs:
         CI: true
     - name: E2E tests
       run: |
-        npm run test-e2e
+        npm run test-e2e-ci
       env: # Or as an environment variable
         DCC_NEW_TMP_EMAIL: ${{ secrets.super_secret }}
         CI: true
