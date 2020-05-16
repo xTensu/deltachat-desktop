@@ -18,10 +18,10 @@ jobs:
     - name: Unit tests
       run: |
         npm run test
+      env:
     - name: E2E tests
       run: |
         npm run test-e2e
       env: # Or as an environment variable
         DCC_NEW_TMP_EMAIL: ${{ secrets.super_secret }}
-      env:
         CI: true
