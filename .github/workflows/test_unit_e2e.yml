@@ -1,9 +1,9 @@
-name: Unit & E2E tests
-
+name: Linux
 on: [push]
 
 jobs:
   unit_e2e_tests:
+    name: Test Unit & E2E
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
