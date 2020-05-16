@@ -20,7 +20,7 @@ jobs:
         npm run test
     - name: E2E tests
       run: |
-        npm run e2e-test
+        npm run test-e2e
       env: # Or as an environment variable
         DCC_NEW_TMP_EMAIL: ${{ secrets.super_secret }}
       env:
