@@ -1,9 +1,9 @@
-name: npm test
+name: Unit & E2E tests
 
 on: [push]
 
 jobs:
-  build:
+  unit_e2e_tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -21,5 +21,7 @@ jobs:
     - name: E2E tests
       run: |
         npm run e2e-test
+      env: # Or as an environment variable
+        DCC_NEW_TMP_EMAIL: ${{ secrets.super_secret }}
       env:
         CI: true
