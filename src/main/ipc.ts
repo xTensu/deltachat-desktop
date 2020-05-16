@@ -99,12 +99,18 @@ export function init(cwd: string, state: AppState, logHandler: LogHandler) {
   )
 
   ipcMain.on('login', (_e: any, credentials) => {
-    dcController.loginController.login(
-      getNewAccountPath(credentials.addr),
-      credentials,
-      sendStateToRenderer,
-      txCoreStrings()
-    )
+    setTimeout(() => {
+      try {
+        dcController.loginController.login(
+          getNewAccountPath(credentials.addr),
+          credentials,
+          sendStateToRenderer,
+          txCoreStrings()
+        )
+      } catch (error) {
+        main.send('error')
+      }
+    }, 0)
   })
 
   ipcMain.on('loadAccount', (e, login: DeltaChatAccount) => {
