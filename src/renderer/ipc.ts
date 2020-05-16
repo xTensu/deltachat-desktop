@@ -101,36 +101,29 @@ export class ElectronIPCTransport implements TransportMethod {
 
   constructor() {}
 
-  setup(): Promise<void> {
-    return new Promise((res, rej) => {
-      ipcRenderer.on('backend_call_result', (_event, answer) => {
-        // handle answer
-        // console.log("got", answer)
-        // if (answer.invocation_id == 0) {
-        //   throw new Error('Command id missing error')
-        // }
-        if (!answer.invocation_id) {
-          throw new Error('invocation_id missing')
-        }
-        const callback = this.callbacks[answer.invocation_id - 1]
-        if (!callback) {
-          throw new Error(
-            `No callback found for invocation_id ${answer.invocation_id}`
-          )
-        }
+  setup() {
+    ipcRenderer.on('backend_call_result', (_event, answer) => {
+      // handle answer
+      // console.log("got", answer)
+      if (!answer.invocation_id) {
+        throw new Error('invocation_id missing')
+      }
+      const callback = this.callbacks[answer.invocation_id - 1]
+      if (!callback) {
+        log.error(`No callback found for invocation_id ${answer.invocation_id}`)
+      }
 
-        if (answer.kind && answer.message) {
-          callback.rej(new Error(`${answer.kind}:${answer.message}`))
-        } else {
-          callback.res(answer.result || null)
-        }
+      if (answer.kind && answer.message) {
+        callback.rej(new Error(`${answer.kind}:${answer.message}`))
+      } else {
+        callback.res(answer.result || null)
+      }
 
-        this.callbacks[answer.invocation_id] = null
-      })
-
-      this.initialized = true
-      this.online = true
+      this.callbacks[answer.invocation_id] = null
     })
+
+    this.initialized = true
+    this.online = true
   }
 
   send(commandId: string, parameters: ApiArguments): Promise<any | null> {
@@ -162,6 +155,5 @@ export class ElectronIPCTransport implements TransportMethod {
   }
 }
 
-const Backend_Transport = new ElectronIPCTransport()
-Backend_Transport.setup()
+export const Backend_Transport = new ElectronIPCTransport()
 ;(global as any)._BT = Backend_Transport

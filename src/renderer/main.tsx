@@ -4,6 +4,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { ExtendedApp } from '../shared/shared-types'
 import { exp } from './experimental'
+import { Backend_Transport } from './ipc'
+
+Backend_Transport.setup()
 
 function main() {
   exp.help //make sure experimental.ts is used

@@ -87,9 +87,11 @@ export function init(cwd: string, state: AppState, logHandler: LogHandler) {
 
   /* dispatch a method on DC core */
   ipcMain.on('backend_call', (e: any, request: CommandRequest) => {
-    callMethod(request, dcController).then(r => {
-      main.send('backend_call_result', r)
-    })
+    setTimeout(() => {
+      callMethod(request, dcController).then(r => {
+        main.send('backend_call_result', r)
+      })
+    }, 0)
   })
 
   ipcMain.on('handleLogMessage', (e, channel, level, stacktrace, ...args) =>
