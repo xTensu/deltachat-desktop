@@ -11,10 +11,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: npm install, build, and test
+    - name: npm install & build
       run: |
         npm ci
         npm run build
+    - name: Unit tests
+      run: |
         npm run test
+    - name: E2E tests
+      run: |
+        npm run e2e-test
       env:
         CI: true
