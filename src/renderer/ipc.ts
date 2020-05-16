@@ -95,7 +95,8 @@ export interface TransportMethod {
 }
 
 export class ElectronIPCTransport implements TransportMethod {
-  callbacks: { res: Function; rej: Function }[] = []
+  callbacks: { [key: number]: { res: Function; rej: Function } } = {}
+  invocation_id_counter: number = 0
   initialized = false
   online = false
 
@@ -104,11 +105,8 @@ export class ElectronIPCTransport implements TransportMethod {
   setup() {
     ipcRenderer.on('backend_call_result', (_event, answer) => {
       // handle answer
-      // console.log("got", answer)
-      if (!answer.invocation_id) {
-        throw new Error('invocation_id missing')
-      }
-      const callback = this.callbacks[answer.invocation_id - 1]
+      // console.log('got', answer)
+      const callback = this.callbacks[answer.invocation_id]
       if (!callback) {
         log.error(`No callback found for invocation_id ${answer.invocation_id}`)
       }
@@ -119,7 +117,7 @@ export class ElectronIPCTransport implements TransportMethod {
         callback.res(answer.result || null)
       }
 
-      this.callbacks[answer.invocation_id] = null
+      delete this.callbacks[answer.invocation_id]
     })
 
     this.initialized = true
@@ -129,17 +127,20 @@ export class ElectronIPCTransport implements TransportMethod {
   send(commandId: string, parameters: ApiArguments): Promise<any | null> {
     if (!this.initialized) throw new Error("Transport wasn't initilized yet")
     if (!this.online) throw new Error('Not connected to backend')
+    const identifier = this.invocation_id_counter++
+    if (identifier >= Number.MAX_SAFE_INTEGER - 1)
+      this.invocation_id_counter = 0
 
     let callback
 
     const promise = new Promise((res, rej) => {
       callback = { res, rej }
     })
-
+    this.callbacks[identifier] = callback
     let data: CommandRequest = {
       arguments: parameters,
       command_id: commandId,
-      invocation_id: this.callbacks.push(callback),
+      invocation_id: identifier,
     }
     // console.log("sending:", data)
     ipcRenderer.send('backend_call', data)
@@ -147,11 +148,11 @@ export class ElectronIPCTransport implements TransportMethod {
   }
 
   _currentCallCount() {
-    return this.callbacks.length
+    return this.invocation_id_counter
   }
 
   _currentUnresolvedCallCount() {
-    return this.callbacks.filter(cb => cb !== null).length
+    return Object.keys(this.callbacks).length
   }
 }
 
