@@ -263,7 +263,6 @@ class DeltaRemote {
     theme: Theme
     data: string
   } | null>
-  call(fnName: 'extras.setThemeFilePath', address: string): void
   call(fnName: 'extras.getAvailableThemes'): Promise<Theme[]>
   call(fnName: 'extras.setTheme', address: string): void
   // catchall: ----------------------------------------------------------
