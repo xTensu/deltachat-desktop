@@ -106,7 +106,6 @@ export class DeltaChatInstance extends HasTransport {
 
   /** triggers an error to test error behaviour */
   async _trigger_error(): Promise<boolean> {
-    throw new Error('Not implemented yet')
     return this.transport.send(CommandId.test_trigger_error, {})
   }
 
