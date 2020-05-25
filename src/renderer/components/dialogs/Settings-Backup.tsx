@@ -4,6 +4,7 @@ import { SettingsButton } from './Settings'
 import { confirmationDialogLegacy as confirmationDialog } from './ConfirmationDialog'
 import { OpenDialogOptions } from 'electron'
 import { ipcBackend } from '../../ipc'
+import { DeltaBackend } from '../../delta-remote'
 
 const { remote } = window.electron_functions
 
@@ -37,7 +38,7 @@ function onBackupExport() {
 
           closeDialog('ImexProgress')
         })
-        ipcBackend.send('backupExport', filenames[0])
+        DeltaBackend.call('backup.export', filenames[0])
         openDialog('ImexProgress', {})
       })
     },
