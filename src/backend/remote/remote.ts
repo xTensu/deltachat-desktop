@@ -7,6 +7,7 @@ import {
   JsonLocations,
   Theme,
   DCContact,
+  LocalSettings,
 } from '../../shared/shared-types'
 import { MuteDuration } from '../../shared/constants'
 import { LocaleData } from '../../shared/localize'
@@ -22,6 +23,16 @@ class HasTransport {
 export class Accounts extends HasTransport {
   // todo getAccounts
   async importBackup(file: string): Promise<void> {
+    throw new Error('Not implemented yet')
+  }
+
+  // to replace state.logins
+  async getLogins(): Promise<DeltaChatAccount[]> {
+    throw new Error('Not implemented yet')
+  }
+
+  // to replace ipc function 'forgetLogin'
+  async forgetAccount(login: DeltaChatAccount): Promise<void> {
     throw new Error('Not implemented yet')
   }
 }
@@ -43,8 +54,26 @@ export class Themes extends HasTransport {
 
 export class Localization extends HasTransport {
   // todo get availible Languages
-  // set Language
+  // replaces ipc call 'chooseLanguage'
+  async setLanguage(): Promise<LocaleData> {
+    throw new Error('Not implemented yet')
+  }
   async getLocaleData(locale: string): Promise<LocaleData> {
+    throw new Error('Not implemented yet')
+  }
+}
+
+/**
+ * describes local cofiguration shared between all accounts -> config.json
+ */
+export class LocalSharedSettings extends HasTransport {
+  // replaces state.saved
+  async getConfig(): Promise<LocalSettings> {
+    throw new Error('Not implemented yet')
+  }
+
+  // replaces ipc 'updateDesktopSetting' (that might be already moved to the DeltaChatController)
+  async set(key: string, value: any): Promise<void> {
     throw new Error('Not implemented yet')
   }
 }
@@ -52,6 +81,7 @@ export class Localization extends HasTransport {
 export class DeltaChatInstance extends HasTransport {
   readonly accounts = new Accounts(this.transport)
   readonly themes = new Themes(this.transport)
+  readonly localSharedConfig = new LocalSharedSettings(this.transport)
   private _context: Context | null
 
   get context() {
@@ -60,11 +90,18 @@ export class DeltaChatInstance extends HasTransport {
   }
 
   /** sets the currently active account of the connection */
-  async openContext() {
+  async openContext(login: DeltaChatAccount) {
     throw new Error('Not implemented yet')
     await this.transport.send(CommandId.openContext, {})
     this._context = new Context(this.transport)
+    // todo setup notifications (listen to event)
+    // todo setup unread badgeCounter (listen to event)
     return this._context
+  }
+
+  async closeContext() {
+    throw new Error('Not implemented yet')
+    this._context = null
   }
 
   /** triggers an error to test error behaviour */
@@ -372,7 +409,11 @@ export class Context extends HasTransport {
   readonly messageList = new MessageList(this.transport)
   readonly settings = new Settings(this.transport)
 
-  /** Login to an email account */
+  async isConfigured(): Promise<boolean> {
+    throw new Error('Not implemented yet')
+  }
+
+  /** Configure the account */
   async configure(/* TODO */) {
     throw new Error('Not implemented yet')
   }
@@ -418,3 +459,8 @@ export class Context extends HasTransport {
     throw new Error('Not implemented yet')
   }
 }
+
+// todo events:
+// update-logins // send to all clients when the accountlist changes
+// update-desktop-config // send to all clients when the config.json changed
+// update-locale // if locale was changed (its a local-shared-setting so it applies to all accounts) or when the experimental language file is watched and it changed
