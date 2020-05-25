@@ -18,6 +18,8 @@ import { init as refreshMenu } from './menu'
 import { ExtendedAppMainProcess } from './types'
 import * as mainWindow from './windows/main'
 import { openHelpWindow } from './windows/help'
+import { callMethod } from './deltachat/api'
+import { CommandRequest } from '../shared/backend_api'
 
 const log = getLogger('main/ipc')
 const DeltaChatController: typeof import('./deltachat/controller').default = (() => {
@@ -82,28 +84,13 @@ export function init(cwd: string, state: AppState, logHandler: LogHandler) {
   ipcMain.once('frontendReady', () => app.emit('frontendReady'))
 
   /* dispatch a method on DC core */
-  ipcMain.on(
-    'EVENT_DC_DISPATCH',
-    (e: any, identifier: number, methodName: string, args: any[]) => {
-      if (!Array.isArray(args)) args = [args]
-      log.debug('EVENT_DC_DISPATCH: ', methodName, args)
-      dcController.callMethod(e, methodName, args)
-    }
-  )
-
-  /* dispatch a method on DC core with result passed to callback */
-  ipcMain.on(
-    'EVENT_DC_DISPATCH_CB',
-    async (e: any, identifier: number, methodName: string, args: any[]) => {
-      if (!Array.isArray(args)) args = [args]
-      log.debug(`EVENT_DC_DISPATCH_CB (${identifier}) : ${methodName} ${args}`)
-      const returnValue = await dcController.callMethod(e, methodName, args)
-      main.send(
-        `EVENT_DD_DISPATCH_RETURN_${identifier}_${methodName}`,
-        returnValue
-      )
-    }
-  )
+  ipcMain.on('backend_call', (e: any, request: CommandRequest) => {
+    setTimeout(() => {
+      callMethod(request, dcController).then(r => {
+        main.send('backend_call_result', r)
+      })
+    }, 0)
+  })
 
   ipcMain.on('handleLogMessage', (e, channel, level, stacktrace, ...args) =>
     logHandler.log(channel, level, stacktrace, ...args)

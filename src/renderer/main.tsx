@@ -5,8 +5,10 @@ import ReactDOM from 'react-dom'
 import { ExtendedApp } from '../shared/shared-types'
 import { exp } from './experimental'
 import { setLogHandler, printProcessLogLevelInfo } from '../shared/logger'
-
 import App from './App'
+
+import { Backend_Transport } from './ipc'
+Backend_Transport.setup()
 
 function main() {
   exp.help //make sure experimental.ts is used

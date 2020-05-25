@@ -7,6 +7,7 @@ import { getLogger } from '../shared/logger'
 
 const { ipcRenderer } = window.electron_functions
 const log = getLogger('renderer/ipc')
+import { ApiArguments, CommandRequest } from '../shared/backend_api'
 
 export const ipcBackend = ipcRenderer
 
@@ -35,7 +36,7 @@ var callDcMethodIdentifier = 0
 function callDcMethod(
   methodName: string,
   args: any[],
-  cb?: (returnValue: any) => void
+  cb: (returnValue: any) => void
 ) {
   const identifier = callDcMethodIdentifier++
   if (identifier >= Number.MAX_SAFE_INTEGER - 1) callDcMethodIdentifier = 0
@@ -63,7 +64,7 @@ export function _callDcMethodAsync(
   fnName: string,
   ...args: any[]
 ): Promise<any> {
-  return new Promise((resolve, reject) => callDcMethod(fnName, args, resolve))
+  return Backend_Transport.send(fnName, args)
 }
 
 export function mainProcessUpdateBadge() {
@@ -86,3 +87,76 @@ export function openHelp() {
 }
 
 ipcRenderer.on('showHelpDialog', openHelp)
+
+// Communicate with deltachat controller backend
+
+export interface TransportMethod {
+  initialized: boolean
+  online: boolean
+  send(commandId: string, parameters: ApiArguments): Promise<any>
+}
+
+export class ElectronIPCTransport implements TransportMethod {
+  callbacks: { [key: number]: { res: Function; rej: Function } } = {}
+  invocation_id_counter: number = 0
+  initialized = false
+  online = false
+
+  constructor() {}
+
+  setup() {
+    ipcRenderer.on('backend_call_result', (_event, answer) => {
+      // handle answer
+      // console.log('got', answer)
+      const callback = this.callbacks[answer.invocation_id]
+      if (!callback) {
+        log.error(`No callback found for invocation_id ${answer.invocation_id}`)
+      }
+
+      if (answer.kind && answer.message) {
+        callback.rej(new Error(`${answer.kind}:${answer.message}`))
+      } else {
+        callback.res(answer.result || null)
+      }
+
+      delete this.callbacks[answer.invocation_id]
+    })
+
+    this.initialized = true
+    this.online = true
+  }
+
+  send(commandId: string, parameters: ApiArguments): Promise<any | null> {
+    if (!this.initialized) throw new Error("Transport wasn't initilized yet")
+    if (!this.online) throw new Error('Not connected to backend')
+    const identifier = this.invocation_id_counter++
+    if (identifier >= Number.MAX_SAFE_INTEGER - 1)
+      this.invocation_id_counter = 0
+
+    let callback
+
+    const promise = new Promise((res, rej) => {
+      callback = { res, rej }
+    })
+    this.callbacks[identifier] = callback
+    let data: CommandRequest = {
+      arguments: parameters,
+      command_id: commandId,
+      invocation_id: identifier,
+    }
+    // console.log("sending:", data)
+    ipcRenderer.send('backend_call', data)
+    return promise
+  }
+
+  _currentCallCount() {
+    return this.invocation_id_counter
+  }
+
+  _currentUnresolvedCallCount() {
+    return Object.keys(this.callbacks).length
+  }
+}
+
+export const Backend_Transport = new ElectronIPCTransport()
+;(global as any)._BT = Backend_Transport

@@ -8,10 +8,7 @@ export default function setupUnreadBadge(dc: DeltaChatController) {
   let reUpdateTimeOut: NodeJS.Timeout
 
   async function update() {
-    const count = await dc.callMethod(
-      null,
-      'chatList.getGeneralFreshMessageCounter'
-    )
+    const count = await dc._callMethod('chatList.getGeneralFreshMessageCounter')
     app.setBadgeCount(count)
   }
 

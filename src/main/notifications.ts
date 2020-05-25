@@ -11,13 +11,13 @@ export default function(dc: DeltaChatController, settings: any) {
   let notify: Notification
 
   async function isMuted(chatId: number) {
-    return await dc.callMethod(null, 'chatList.isChatMuted', [chatId])
+    return await dc._callMethod('chatList.isChatMuted', [chatId])
   }
 
   async function getMsgBody(msgId: number) {
     const tx = (app as ExtendedAppMainProcess).translate
     if (!settings.showNotificationContent) return tx('notify_new_message')
-    var json = await dc.callMethod(null, 'messageList.messageIdToJson', [msgId])
+    var json = await dc._callMethod('messageList.messageIdToJson', [msgId])
     var summary = json.msg.summary
     return `${summary.text1 || json.contact.displayName}: ${summary.text2}`
   }
