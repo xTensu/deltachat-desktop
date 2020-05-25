@@ -141,7 +141,7 @@ export default class Settings extends React.Component {
 
   /** Saves settings to deltachat core */
   handleDeltaSettingsChange(key: string, value: string | boolean) {
-    ipcRenderer.sendSync('setConfig', key, value)
+    DeltaBackend.call('settings.setConfig', key, String(value))
     const settings = this.state.settings
     settings[key] = String(value)
     this.setState({ settings })
