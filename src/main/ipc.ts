@@ -160,24 +160,9 @@ export function init(cwd: string, state: AppState, logHandler: LogHandler) {
 
   ipcMain.on('updateLogins', updateLogins)
 
-  ipcMain.on('getMessage', (e, msgId: number) => {
-    e.returnValue = dcController.messageList.messageIdToJson(msgId)
-  })
-
-  /* unused
-  ipcMain.on('getChatContacts', (e, chatId) => {
-    e.returnValue = dc.chat.getChatContacts(chatId)
-  })
-  */
-
   ipcMain.on('backupImport', (e, fileName) =>
     dcController.backup.import(fileName)
   )
-  ipcMain.on('backupExport', (e, dir) => dcController.backup.export(dir))
-
-  ipcMain.on('setConfig', (e, key, value) => {
-    e.returnValue = dcController.settings.setConfig(key, value)
-  })
 
   ipcMain.on('logout', () => dcController.loginController.logout())
 
