@@ -53,8 +53,6 @@ function ImportBackupProgressDialog({
     setError('DC_EVENT_ERROR: ' + data2)
   }
 
-  
-
   useEffect(() => {
     ;(async () => {
       let account
@@ -192,9 +190,17 @@ export default function LoginScreen({
 
   return (
     <div className='login-screen'>
-      <div className='window' style={{backgroundImage: `url('${backgroundImage.src}')`}}>
+      <div
+        className='window'
+        style={{ backgroundImage: `url('${backgroundImage.src}')` }}
+      >
         <div className='bp3-overlay-backdrop'>
-          <DeltaDialogBase isOpen={true} onClose={() => {}} fixed={true} style={{transition: 'none'}}>
+          <DeltaDialogBase
+            isOpen={true}
+            onClose={() => {}}
+            fixed={true}
+            style={{ transition: 'none' }}
+          >
             {view === 'login' && (
               <>
                 <DeltaDialogHeader title={tx('add_account')} />
