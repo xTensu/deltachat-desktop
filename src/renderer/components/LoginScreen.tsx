@@ -29,6 +29,10 @@ import { PseudoContact } from './contact/Contact'
 
 const log = getLogger('renderer/components/LoginScreen')
 
+// Preload the backgroundImage so that it's getting loaded before we render
+const backgroundImage = new Image()
+backgroundImage.src = '../images/backgrounds/petito-moreno.webp'
+
 function ImportBackupProgressDialog({
   onClose,
   isOpen,
@@ -48,6 +52,8 @@ function ImportBackupProgressDialog({
   const onError = (_data1: any, data2: string) => {
     setError('DC_EVENT_ERROR: ' + data2)
   }
+
+  
 
   useEffect(() => {
     ;(async () => {
@@ -186,9 +192,9 @@ export default function LoginScreen({
 
   return (
     <div className='login-screen'>
-      <div className='window'>
+      <div className='window' style={{backgroundImage: `url('${backgroundImage.src}')`}}>
         <div className='bp3-overlay-backdrop'>
-          <DeltaDialogBase isOpen={true} onClose={() => {}} fixed={true}>
+          <DeltaDialogBase isOpen={true} onClose={() => {}} fixed={true} style={{transition: 'none'}}>
             {view === 'login' && (
               <>
                 <DeltaDialogHeader title={tx('add_account')} />
