@@ -5,6 +5,7 @@
 ### Added
 - add option to open message html in browser
 - encryption info for groups
+- add audit log to chats (view where only info/system messages are shown such as member added/removed)
 
 ## Fixed
 - hide show encryption info for saved messages (resulted in error)
