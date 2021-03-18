@@ -4,6 +4,8 @@
 
 ### Changed
 - Switch back to file scheme #2171 fixes audio and video seeking issues
+- Update to electron `12.0.1`
+- Update electron-builder to `22.10.5`
 
 ## [1.15.3] - 2021-03-18
 
