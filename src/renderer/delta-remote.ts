@@ -235,10 +235,6 @@ class DeltaRemote {
   ): Promise<{ msg: null } | MessageType>
   call(
     fnName: 'messageList.getMessages',
-    messageIds: number[]
-  ): Promise<{ [key: number]: MessageType | { msg: null } }>
-  call(
-    fnName: 'messageList.getMessages2',
     chatId: number,
     indexStart: number,
     indexEnd: number,
