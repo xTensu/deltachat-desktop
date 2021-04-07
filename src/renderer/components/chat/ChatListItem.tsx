@@ -7,6 +7,7 @@ import { ScreenContext, useTranslationFunction } from '../../contexts'
 import {
   ChatListItemType,
   MessageSearchResult,
+  MessageState,
 } from '../../../shared/shared-types'
 import { Avatar } from '../Avatar'
 
@@ -49,7 +50,7 @@ const Message = React.memo(
           {summary.text1 !== null && (
             <div
               className={classNames('summary', {
-                draft: summary.status === 'draft',
+                draft: summary.state === (C.DC_STATE_OUT_DRAFT as MessageState),
               })}
             >
               {summary.text1 + ': '}
@@ -62,8 +63,8 @@ const Message = React.memo(
             {window.static_translate('chat_archived_label')}
           </div>
         )}
-        {!archived && summary.status && (
-          <div className={classNames('status-icon', summary.status)} />
+        {!archived && summary.state && (
+          <div className={classNames('status-icon', summary.state)} />
         )}
         <FreshMessageCounter counter={freshMessageCounter} />
       </div>

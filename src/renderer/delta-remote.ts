@@ -284,6 +284,10 @@ class DeltaRemote {
     fnName: 'messageList.getUnreadMessageIds',
     chatId: number
   ): Promise<number[]>
+  call(
+    fnName: 'messageList.markSeenMessages',
+    messageIds: number[]
+  ): Promise<void>
   // settings -----------------------------------------------------------
   call(
     fnName: 'settings.setConfig',
