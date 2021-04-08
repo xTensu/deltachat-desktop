@@ -277,6 +277,7 @@ class DeltaRemote {
     fnName: 'messageList.saveMessageHTML2Disk',
     messageId: number
   ): Promise<string>
+  call(
     fnName: 'messageList.getFirstUnreadMessageId',
     chatId: number
   ): Promise<number>
