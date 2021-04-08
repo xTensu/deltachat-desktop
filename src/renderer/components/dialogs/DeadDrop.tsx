@@ -6,6 +6,7 @@ import { DialogProps } from './DialogController'
 import { DCContact, MessageType } from '../../../shared/shared-types'
 import { SmallDialog } from './DeltaDialog'
 import { useTranslationFunction } from '../../contexts'
+import { deleteMessage } from '../helpers/ChatMethods'
 
 /**
  * handle contact requests
@@ -20,7 +21,7 @@ export default function DeadDrop(props: {
 
   const never = () => {
     DeltaBackend.call('contacts.blockContact', contact.id)
-    chatStoreDispatch({ type: 'UI_DELETE_MESSAGE', payload: msg.id })
+    deleteMessage(msg.id)
     onClose()
   }
 

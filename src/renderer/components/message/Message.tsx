@@ -2,11 +2,11 @@ import {
   onDownload,
   openAttachmentInShell,
   forwardMessage,
-  deleteMessage,
   openMessageInfo,
   setQuoteInDraft,
   privateReply,
   openMessageHTML,
+  deleteMessageWithConfirm,
 } from './messageFunctions'
 import React, { useContext, useState, useEffect } from 'react'
 
@@ -216,7 +216,7 @@ function buildContextMenu(
     // Delete message
     {
       label: tx('delete_message_desktop'),
-      action: deleteMessage.bind(null, message.msg, chatStoreDispatch),
+      action: deleteMessageWithConfirm.bind(null, message.msg, chatStoreDispatch),
     },
     // showRetry && {
     //   label:tx('retry_send'),
