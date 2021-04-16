@@ -12,6 +12,7 @@
 - allow starting a viedochat in groups
 
 ## Fixed
+- Don't delete Contactrequest messages, that are blocked - answered with never. #2225
 - hide show encryption info for saved messages (resulted in error)
 - remove "file://" scheme from filenames before calling `dc_msg_set_file` for stickers
 - initialize name field in contact profile dialog with previouly manually set name and use authname as a placeholder
