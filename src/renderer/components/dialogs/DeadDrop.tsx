@@ -6,7 +6,7 @@ import { DialogProps } from './DialogController'
 import { DCContact, MessageType } from '../../../shared/shared-types'
 import { SmallDialog } from './DeltaDialog'
 import { useTranslationFunction } from '../../contexts'
-import { deleteMessage } from '../helpers/ChatMethods'
+import { deleteMessage, selectChat } from '../helpers/ChatMethods'
 
 /**
  * handle contact requests
@@ -38,7 +38,7 @@ export default function DeadDrop(props: {
       messageId,
       contactId,
     })
-    chatStoreDispatch({ type: 'SELECT_CHAT', payload: chatId })
+    selectChat(chatId)
     onClose()
   }
 
