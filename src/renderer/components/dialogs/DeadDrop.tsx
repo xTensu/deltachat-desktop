@@ -2,7 +2,7 @@ import React from 'react'
 import { DeltaBackend } from '../../delta-remote'
 import { Classes } from '@blueprintjs/core'
 import { DialogProps } from './DialogController'
-import { DCContact, MessageType } from '../../../shared/shared-types'
+import { DCContact, Message } from '../../../shared/shared-types'
 import { SmallDialog } from './DeltaDialog'
 import { useTranslationFunction } from '../../contexts'
 import { deleteMessage, selectChat } from '../helpers/ChatMethods'
@@ -12,14 +12,14 @@ import { deleteMessage, selectChat } from '../helpers/ChatMethods'
  */
 export default function DeadDrop(props: {
   contact: DCContact
-  msg: MessageType['msg']
+  message: Message
   onClose: DialogProps['onClose']
 }) {
-  const { contact, msg, onClose } = props
+  const { contact, message, onClose } = props
 
   const never = () => {
     DeltaBackend.call('contacts.blockContact', contact.id)
-    deleteMessage(msg.id)
+    deleteMessage(message.id)
     onClose()
   }
 
@@ -30,7 +30,7 @@ export default function DeadDrop(props: {
   }
 
   const yes = async () => {
-    const messageId = msg.id
+    const messageId = message.id
     const contactId = contact.id
     const chatId = await DeltaBackend.call('contacts.acceptContactRequest', {
       messageId,

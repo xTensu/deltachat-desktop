@@ -16,9 +16,9 @@ import MessageMetaData from './MessageMetaData'
 
 import Attachment from '../attachment/messageAttachment'
 import {
-  MessageType,
+  Message,
   DCContact,
-  MessageTypeAttachment,
+  MessageAttachment,
   MessageState,
   MessageQuote,
 } from '../../../shared/shared-types'
@@ -139,10 +139,10 @@ function buildContextMenu(
     isDeviceChat,
   }: // onRetrySend,
   {
-    attachment: MessageTypeAttachment
+    attachment: MessageAttachment
     direction: 'incoming' | 'outgoing'
     state: MessageState
-    message: MessageType | { msg: null }
+    message: Message
     text?: string
     conversationType: 'group' | 'direct'
     isDeviceChat: boolean
@@ -154,8 +154,9 @@ function buildContextMenu(
   const tx = window.static_translate // don't use the i18n context here for now as this component is inefficient (rendered one menu for every message)
 
   // eslint-disable-next-line
-  const showRetry = state === C.DC_STATE_OUT_FAILED && direction === 'outgoing'
-  const showAttachmentOptions = attachment && !message.msg.isSetupmessage
+  const showRetry =
+    state === MessageState.OUT_FAILED && direction === 'outgoing'
+  const showAttachmentOptions = attachment && !message.isSetupmessage
 
   const textSelected: boolean = window.getSelection().toString() !== ''
   // grab selected text before clicking, otherwise the selection might be already gone
@@ -165,13 +166,13 @@ function buildContextMenu(
     // Reply
     !isDeviceChat && {
       label: tx('reply_noun'),
-      action: setQuoteInDraft.bind(null, message.msg.id),
+      action: setQuoteInDraft.bind(null, message.id),
     },
     // Reply privately -> only show in groups, don't show on info messages or outgoing messages
     conversationType === 'group' &&
-      message.msg.fromId > C.DC_CONTACT_ID_LAST_SPECIAL && {
+      message.fromId > C.DC_CONTACT_ID_LAST_SPECIAL && {
         label: tx('reply_privately'),
-        action: privateReply.bind(null, message.msg),
+        action: privateReply.bind(null, message),
       },
 
     // Copy [selection] to clipboard
@@ -197,12 +198,12 @@ function buildContextMenu(
     showAttachmentOptions &&
       isGenericAttachment(attachment) && {
         label: tx('open_attachment'),
-        action: openAttachmentInShell.bind(null, message.msg),
+        action: openAttachmentInShell.bind(null, message),
       },
     // Download attachment
     showAttachmentOptions && {
       label: tx('menu_export_attachment'),
-      action: onDownload.bind(null, message.msg),
+      action: onDownload.bind(null, message),
     },
     // Forward message
     {
@@ -217,11 +218,7 @@ function buildContextMenu(
     // Delete message
     {
       label: tx('delete_message_desktop'),
-      action: deleteMessageWithConfirm.bind(
-        null,
-        message.msg,
-        chatStoreDispatch
-      ),
+      action: deleteMessageWithConfirm.bind(null, message, chatStoreDispatch),
     },
     // showRetry && {
     //   label:tx('retry_send'),
@@ -230,8 +227,8 @@ function buildContextMenu(
   ]
 }
 
-const Message = (props: {
-  message: MessageType
+const MessageComponent = (props: {
+  message: Message
   conversationType: 'group' | 'direct'
   isDeviceChat: boolean
   /* onRetrySend */
@@ -247,7 +244,7 @@ const Message = (props: {
     attachment,
     isSetupmessage,
     hasHTML,
-  } = message.msg
+  } = message
   const tx = useTranslationFunction()
 
   const screenContext = useContext(ScreenContext)
@@ -306,7 +303,7 @@ const Message = (props: {
   }
 
   let onClickMessageBody
-  const isDeadDrop = message.msg.chatId === C.DC_CHAT_ID_DEADDROP
+  const isDeadDrop = message.chatId === C.DC_CHAT_ID_DEADDROP
   if (isSetupmessage) {
     onClickMessageBody = () =>
       openDialog('EnterAutocryptSetupMessage', { message })
@@ -317,7 +314,7 @@ const Message = (props: {
   }
 
   let content
-  if (message.msg.viewType === C.DC_MSG_VIDEOCHAT_INVITATION) {
+  if (message.viewType === C.DC_MSG_VIDEOCHAT_INVITATION) {
     return (
       <div className='videochat-invitation'>
         <div className='videochat-icon'>
@@ -343,7 +340,7 @@ const Message = (props: {
   } else {
     content = (
       <div dir='auto' className='text'>
-        {message.msg.isSetupmessage ? (
+        {message.isSetupmessage ? (
           tx('autocrypt_asm_click_body')
         ) : (
           <MessageBody text={text || ''} />
@@ -352,11 +349,11 @@ const Message = (props: {
     )
   }
 
-  const hasQuote = message.msg.quote !== null
+  const hasQuote = message.quote !== null
 
   const onMessageDoubleClick = (event: React.MouseEvent<HTMLInputElement>) => {
     event.preventDefault()
-    setQuoteInDraft(message.msg.id)
+    setQuoteInDraft(message.id)
     window.getSelection().empty()
   }
 
@@ -368,7 +365,7 @@ const Message = (props: {
         direction,
         { 'type-sticker': viewType === C.DC_MSG_STICKER },
         { error: status === 'error' },
-        { forwarded: message.msg.isForwarded }
+        { forwarded: message.isForwarded }
       )}
       onDoubleClick={onMessageDoubleClick}
     >
@@ -380,14 +377,14 @@ const Message = (props: {
         className='msg-container'
         style={{ borderColor: message.contact.color }}
       >
-        {message.msg.isForwarded &&
+        {message.isForwarded &&
           ForwardedTitle(
             message.contact,
             onContactClick,
             direction,
             conversationType
           )}
-        {!message.msg.isForwarded && (
+        {!message.isForwarded && (
           <div
             className={classNames('author-wrapper', {
               'can-hide':
@@ -403,7 +400,7 @@ const Message = (props: {
           })}
           onClick={onClickMessageBody}
         >
-          {hasQuote && <Quote quote={message.msg.quote} />}
+          {hasQuote && <Quote quote={message.quote} />}
           {attachment && !isSetupmessage && (
             <Attachment
               {...{
@@ -428,8 +425,8 @@ const Message = (props: {
             state={state}
             text={text}
             hasLocation={hasLocation}
-            timestamp={message.msg.sentAt}
-            padlock={message.msg.showPadlock}
+            timestamp={message.sentAt}
+            padlock={message.showPadlock}
             onClickError={openMessageInfo.bind(null, message)}
           />
         </div>
@@ -438,7 +435,7 @@ const Message = (props: {
   )
 }
 
-export default Message
+export default MessageComponent
 
 export const Quote = ({ quote }: { quote: MessageQuote }) => {
   return (
