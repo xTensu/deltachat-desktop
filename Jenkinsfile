@@ -7,7 +7,7 @@
 
             steps{
                 echo "Building..."
-				sh 'npm install https://github.com/indexzero/forever/tarball/v0.5.6'
+				sh 'npm install'
 				sh 'npm run build'
                 }
             }
@@ -29,14 +29,14 @@
             emailext attachLog: true, 
                 body: "Test status: ${currentBuild.currentResult}", 
                 subject: 'Test passed', 
-                to: 'jackob126@gmail.com'
+                to: 'siekacz@student.agh.edu.pl'
         }
 
         failure {
             emailext attachLog: true, 
                 body: "Test status: ${currentBuild.currentResult}",
                 subject: 'Test failed', 
-                to: 'jackob126@gmail.com'
+                to: 'siekacz@student.agh.edu.pl'
         }
     }
 }
