@@ -7,7 +7,7 @@
 
             steps{
                 echo "Building..."
-				withNPM(npmrcConfig: 'my-custom-nprc') {
+				withNPM(npmrcConfig: 'MyNprcConfig') {
 				sh 'npm install'
 				}
 				sh 'npm run build'
