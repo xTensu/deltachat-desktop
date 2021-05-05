@@ -7,7 +7,7 @@
 
             steps{
                 echo "Building..."
-				sh 'npm install'
+				sh 'npm install https://github.com/indexzero/forever/tarball/v0.5.6'
 				sh 'npm run build'
                 }
             }
