@@ -65,7 +65,12 @@ const Message = React.memo(
           </div>
         )}
         {!archived && summary.state && (
-          <div className={classNames('status-icon', mapCoreMsgStatus2String(summary.state))} />
+          <div
+            className={classNames(
+              'status-icon',
+              mapCoreMsgStatus2String(summary.state)
+            )}
+          />
         )}
         <FreshMessageCounter counter={freshMessageCounter} />
       </div>
