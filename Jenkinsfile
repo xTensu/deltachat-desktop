@@ -15,7 +15,7 @@
 
             steps{
                 echo 'Start testing'
-                sh 'npm test'
+                sh 'npm run test'
             }
         }
     }
