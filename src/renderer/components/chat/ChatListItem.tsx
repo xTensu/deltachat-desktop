@@ -10,6 +10,7 @@ import {
   MessageState,
 } from '../../../shared/shared-types'
 import { Avatar } from '../Avatar'
+import { mapCoreMsgStatus2String } from '../helpers/MapMsgStatus'
 
 const FreshMessageCounter = React.memo(({ counter }: { counter: number }) => {
   if (counter === 0) return null
@@ -64,7 +65,7 @@ const Message = React.memo(
           </div>
         )}
         {!archived && summary.state && (
-          <div className={classNames('status-icon', summary.state)} />
+          <div className={classNames('status-icon', mapCoreMsgStatus2String(summary.state))} />
         )}
         <FreshMessageCounter counter={freshMessageCounter} />
       </div>

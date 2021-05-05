@@ -34,6 +34,7 @@ import { useChatStore2, ChatStoreDispatch } from '../../stores/chat'
 import { runtime } from '../../runtime'
 import { AvatarFromContact } from '../Avatar'
 import moment from 'moment'
+import { mapCoreMsgStatus2String } from '../helpers/MapMsgStatus'
 
 const Avatar = (
   contact: DCContact,
@@ -279,6 +280,7 @@ const MessageComponent = (props: {
       items,
     })
   }
+  const status = mapCoreMsgStatus2String(state)
 
   // Info Message
   if (message.isInfo)
