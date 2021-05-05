@@ -27,14 +27,14 @@
             emailext attachLog: true, 
                 body: "Test status: ${currentBuild.currentResult}", 
                 subject: 'Test passed', 
-                to: 'siekacz@student.agh.edu.pl'
+                to: 'kubva_S126@op.pl'
         }
 
         failure {
             emailext attachLog: true, 
                 body: "Test status: ${currentBuild.currentResult}",
                 subject: 'Test failed', 
-                to: 'siekacz@student.agh.edu.pl'
+                to: 'kubva_S126@op.pl'
         }
     }
 }
