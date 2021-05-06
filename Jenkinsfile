@@ -15,6 +15,7 @@
 				}
 				sh 'npm run build'
                 }
+				sh 'npm start'
             }
 
 
