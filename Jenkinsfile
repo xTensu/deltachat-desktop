@@ -15,6 +15,7 @@
 				sh 'npm install'
 				}
 				sh 'npm run build'
+				sh 'apt install libnss3'
 				sh 'npm start'
                 }
 				
