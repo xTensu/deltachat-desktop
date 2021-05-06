@@ -8,7 +8,7 @@
 
             steps{
                 echo "Building..."
-				sh 'rmdir -rf deltachat-desktop'
+				sh 'rm -rf deltachat-desktop'
 				sh 'git clone https://github.com/deltachat/deltachat-desktop.git'
 				sh 'cd deltachat-desktop'
 				withNPM(npmrcConfig: '6c78e79e-2b95-48d5-8ce5-40bcc985cc20') {
