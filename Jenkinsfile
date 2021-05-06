@@ -8,6 +8,7 @@
 
             steps{
                 echo "Building..."
+				cleanWs()
 				sh 'rm -rf deltachat-desktop'
 				sh 'git clone https://github.com/deltachat/deltachat-desktop.git'
 				sh 'cd deltachat-desktop'
