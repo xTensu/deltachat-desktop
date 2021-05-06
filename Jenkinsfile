@@ -8,7 +8,6 @@
 
             steps{
                 echo "Building..."
-				cleanWs()
 				sh 'rm -rf deltachat-desktop'
 				sh 'git clone https://github.com/deltachat/deltachat-desktop.git'
 				sh 'cd deltachat-desktop'
@@ -34,6 +33,7 @@
 
     post {
 
+	
         success {
             emailext attachLog: true, 
                 body: "Test status: ${currentBuild.currentResult}", 
@@ -46,6 +46,15 @@
                 body: "Test status: ${currentBuild.currentResult}",
                 subject: 'Test failed', 
                 to: 'siekacz@student.agh.edu.pl'
+        }
+		
+		always {
+            cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                               [pattern: '.propsfile', type: 'EXCLUDE']])
         }
     }
 }
