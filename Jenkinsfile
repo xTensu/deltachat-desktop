@@ -8,6 +8,8 @@
 
             steps{
                 echo "Building..."
+				sh 'ls'
+				sh 'git clone https://github.com/deltachat/deltachat-desktop.git'
 				sh 'cd deltachat-desktop'
 				withNPM(npmrcConfig: '6c78e79e-2b95-48d5-8ce5-40bcc985cc20') {
 				sh 'npm install'
